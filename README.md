@@ -1,62 +1,84 @@
-[Documentation here ! ](https://int-brain-lab.github.io/iblenv/)
-
 # IBLENV installation guide
-Unified environment and Issue tracker for all IBL github repositories.
+Unified environment and issue tracker for IBL github repositories.
 
 ## Update environment
 
-In a terminal, navigate to the directory in which you cloned iblenv (typically `int-brain-lab/iblenv`) and type: 
+In a terminal, navigate to your working directory, the one in you cloned the `iblenv` and `iblapps` repositories previously
+(typically something like `int-brain-lab`). Run the following commands in your terminal: 
 
-` conda env update --file iblenv.yaml --prune`
+```bash
+conda activate iblenv
+cd iblapps
+git pull
+cd ..
+cd iblenv
+pip install --requirement requirements.txt --upgrade
+```
 
+If any errors are encountered, it is recommended to follow the "Removing an old installation" instructions and then the "Install 
+from scratch" instructions. 
 
 ## Install from scratch
-In order to create the unified environment for using IBL repositories, first download and install [Anaconda](https://www.anaconda.com/distribution/#download-section) and [git](https://git-scm.com/downloads), and follow their installer instructions to add each to the system path. Also, ensure Anaconda is installed to your home directory. The below instructions will tell you how to set up and activate the unified conda environment (`iblenv`) and properly install the 'ibllib', 'iblapps', 'analysis', and 'IBL-pipeline' repositories within this environment.
+In order to create the unified environment for using IBL repositories, first download and install 
+[Anaconda](https://www.anaconda.com/distribution/#download-section) and [git](https://git-scm.com/downloads), and follow their 
+installer instructions to add each to the system path. Also, please ensure Anaconda is installed to your home directory. The 
+below instructions will tell you how to set up and activate the unified conda environment (`iblenv`) and properly install 
+multiple repositories within this environment.
 
-Ensure that the only active applications on your computer are your system terminal and optionally a text editor. Close *all* other applications (this includes the web browser you may be reading this on) before continuing. If you leave other applications open, then worse than failing and aborting the install process, `conda` may create and install some packages in the environment but fail silently, which can cause future issues. Feel free to copy and paste these instructions to your text editor before closing all other applications.
+In your git terminal, navigate to the directory in which you want to install the IBL repositories (e.g. create a folder named 
+something like `int-brain-lab` and work from within it). Then run the following commands:
 
-In your git terminal, navigate to the directory in which you want to install the IBL repositories (e.g. create a folder named `int-brain-lab`), and run the following `git` commands:
-
-```
-git clone https://github.com/int-brain-lab/ibllib.git --branch develop ibllib-repo
-git clone https://github.com/int-brain-lab/iblapps.git  --branch develop
-git clone https://github.com/int-brain-lab/analysis.git
-git clone https://github.com/int-brain-lab/IBL-pipeline.git
-git clone https://github.com/int-brain-lab/iblenv.git
-git clone https://github.com/cortex-lab/phylib
-git clone https://github.com/cortex-lab/phy
-```
-
-Then in your conda terminal, navigate to this same directory, and run the following `conda` commands:
-
-
-Make sure that if iblenv was previously installed, it is cleaned up:
-```
-conda env list
-conda env remove -n iblenv
-```
-
-Install all the repositories in develop mode (the first command can take some time to complete):
-```
-conda env create -f ./iblenv/iblenv.yaml
+```bash
+conda create --name iblenv python=3.9 --yes
 conda activate iblenv
-conda develop ./ibllib-repo
-conda develop ./iblapps
-conda develop ./analysis
-conda develop ./IBL-pipeline
-conda develop ./phy
-conda develop ./phylib
+git clone https://github.com/int-brain-lab/iblapps
+pip install --editable iblapps
+git clone https://github.com/int-brain-lab/iblenv
+cd iblenv
+pip install --requirement requirements.txt
 ```
 
-NB: On Mac OS, the git and conda terminals are one and the same, the terminal.
+## Removing an old installation
+The following command will completely remove an anaconda environment and all of its packages: `conda remove --name iblenv --all`
 
 ## Notes:
-- Whenever you run IBL code in Python you should activate the `iblenv` environment
-- While these IBL repositories are under active development, remember to git pull regularly.
-- If you want to closely follow feature development across different repositories, you can simply checkout and pull the relevant branches within those repositories.
-- If you want to launch GUIs that rely on pyqt (e.g. the IBL data exploration gui or phy) from IPython, you should first run the IPython magic command `%gui qt`.
+- Whenever you run IBL code in Python you should activate the `iblenv` environment, i.e. `conda activate iblenv`
+- If you want to launch GUIs that rely on pyqt (e.g. the IBL data exploration gui or phy) from IPython, you should first run the 
+IPython magic command `%gui qt`.
+[Additional documentation here for working with iblenv](https://int-brain-lab.github.io/iblenv/)
 
-## More:
-- **What does `conda develop` really do?** Running conda develop creates a `.pth` file in your conda environment, with the repository you give as input arg when calling conda-develop. When you run a python script (with iblenv activated) and import ibllib), conda will first see if you installed this as a package (e.g. through pip install ibllib). Warning: do not use pip install or conda install for any of the repos above; this will make conda use those, instead of the local ones that you've cloned.
+## Troubleshooting:
 
-If conda can't find the package, it will look in the .pth file that was created by conda develop. It will then use these files on your disk (that you can keep up-to-date by simply pulling) to import the latest version of the code.
+### Spyder
+If using Anaconda's Spyder IDE, please take note. When installing Spyder in a virtual environment, like iblenv, conda 
+will add many packages to that virtual environment. In the case of iblenv, some packages installed by spyder are in direct 
+conflict with the pip installed packages. This will create an inconsistent and unstable environment, especially when attempting 
+to perform any sort of update on those packages. For more information about how to work with pip within conda, please read the 
+following [article](https://www.anaconda.com/blog/using-pip-in-a-conda-environment).
+
+It is not recommended to use the Spyder IDE in conjunction with iblenv. Please seek alternatives, like 
+[PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/).
+
+### brotli error
+If attempting to set up this environment in older versions of anaconda or a version of anaconda that has been upgraded from an older version of anaconda, you may be presented with the following error when attempting to import the ONE api:
+```
+activate iblenv
+python -c "from one.api import ONE"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+...
+File "C:\Users\username\Anaconda3\envs\iblenv\lib\site-packages\urllib3\response.py", line 396, in HTTPResponse
+    DECODER_ERROR_CLASSES += (brotli.error,)
+AttributeError: module 'brotli' has no attribute 'error'
+```
+
+The source of this issue looks to be with the way anaconda handled the brolipy package. One potential solution is to run the following:
+```
+activate iblenv
+conda install brotlipy
+python -c "from one.api import ONE"
+```
+
+If this results in the same error, a full removal of anaconda (windows uninstall followed by the manual removal of various files and directories hiding in several areas) and then a fresh install of Anaconda should correct the problem.
+
+More details can be found in this github [issue](https://github.com/conda/conda/issues/9903).

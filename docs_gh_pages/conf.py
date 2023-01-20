@@ -49,15 +49,29 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.mathjax',
               'sphinx.ext.githubpages',
+              'sphinx.ext.intersphinx',
               'sphinx_copybutton',
               'nbsphinx',
               'nbsphinx_link',
               'myst_parser',
               'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode']
+              'sphinx.ext.viewcode',]
+              #'sphinx_gallery.gen_gallery']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# Looks for objects in external projects
+intersphinx_mapping = {
+    'one_api': ('https://int-brain-lab.github.io/ONE/', None),
+}
+
+
+#sphinx_gallery_conf = {
+#     'examples_dirs': '../../ibllib-repo/examples/one/ephys',   # path to your example scripts
+#     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+#     'filename_pattern': 'docs_',
+#}
 
 
 #autoapi_add_toctree_entry = False
@@ -183,6 +197,33 @@ autodoc_default_options = {
 }
 
 
+def param_line_break(app, what, name, obj, options, lines):
+    first_param = next((i for i, j in enumerate(lines) if ':param' in j), -1)
+    if first_param != -1:
+        # if the first param is not preceded by a line break add one in
+        if lines[first_param - 1] != '':
+            lines.insert(first_param, '')
+    return
+
+
+def setup(app):
+    # Connect the autodoc-skip-member event from apidoc to the callback
+    app.connect('autodoc-process-docstring', param_line_break)
+
+#   def autodoc_skip_member_handler(app, what, name, obj, skip, options):
+#       # Basic approach; you might want a regex instead
+#       # TODO still makes the folder structure, need to figure out how not to do that also makes
+        # all the private methods which we don't want
+#       if 'test' in name.lower():
+#           return True
+#       else:
+#           return False
+#
+#   # Automatically called by sphinx at startup
+#   def setup(app):
+#       # Connect the autodoc-skip-member event from apidoc to the callback
+#       app.connect('autodoc-skip-member', autodoc_skip_member_handler)
+
 # -- Options for nbsphinx ------------------------------------
 
 # Only use nbsphinx for formatting the notebooks i.e never execute
@@ -200,20 +241,20 @@ plot_formats = [('png', 512)]
 
 # Add extra prolog to beginning of each .ipynb file
 # Add option to download notebook and link to github page
-nbsphinx_prolog = r"""
-
-{% if env.metadata[env.docname]['nbsphinx-link-target'] %}
-{% set nb_path = env.metadata[env.docname]['nbsphinx-link-target'] | dirname %}
-{% set nb_name = env.metadata[env.docname]['nbsphinx-link-target'] | basename %}
-{% else %}
-{% set nb_name = env.doc2path(env.docname, base=None) | basename %}
-{% set nb_path = env.doc2path(env.docname, base=None) | dirname %}
-{% endif %}
-
-.. raw:: html
-
-      <a href="{{ nb_name }}"><button id="download">Download tutorial notebook</button></a>
-      <a href="https://github.com/int-brain-lab/ibllib/tree/docsMayo/docs_gh_pages/{{ nb_path }}/
-      {{ nb_name }}"><button id="github">Github link</button></a>
-
-"""
+# nbsphinx_prolog = r"""
+#
+# {% if env.metadata[env.docname]['nbsphinx-link-target'] %}
+# {% set nb_path = env.metadata[env.docname]['nbsphinx-link-target'] | dirname %}
+# {% set nb_name = env.metadata[env.docname]['nbsphinx-link-target'] | basename %}
+# {% else %}
+# {% set nb_name = env.doc2path(env.docname, base=None) | basename %}
+# {% set nb_path = env.doc2path(env.docname, base=None) | dirname %}
+# {% endif %}
+#
+# .. raw:: html
+#
+#       <a href="{{ nb_name }}"><button id="download">Download tutorial notebook</button></a>
+#       <a href="https://github.com/int-brain-lab/ibllib/tree/docsMayo/docs_gh_pages/{{ nb_path }}/
+#       {{ nb_name }}"><button id="github">Github link</button></a>
+#
+# """
