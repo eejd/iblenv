@@ -49,27 +49,23 @@ IBL has released a suite of tools to process and visualize our data.
 
 .. toctree::
    :hidden:
-   :caption: DataJoint
-   :maxdepth: 1
-
-   dj_docs/dj_introduction
-   dj_docs/dj_public
-   dj_docs/dj_credentials
-
-.. toctree::
-   :hidden:
    :caption: Public
    :maxdepth: 1
 
    public_docs/public_introduction
+   notebooks_external/data_release_behavior
    public_docs/data_release_pilot
    notebooks_external/data_release_repro_ephys
+   notebooks_external/data_release_brainwidemap
+   public_docs/information_contact
 
 .. toctree::
    :hidden:
    :caption: Exploring IBL Data
    :maxdepth: 1
 
+   notebooks_external/data_structure
+   notebooks_external/data_download
    loading_examples
 
 
@@ -88,8 +84,6 @@ IBL has released a suite of tools to process and visualize our data.
 
    atlas_examples
    notebooks_external/docs_wheel_moves
-   notebooks/dj_intro/dj_intro
-   notebooks/dj_basics/dj_basics
 
 .. toctree::
    :hidden:
